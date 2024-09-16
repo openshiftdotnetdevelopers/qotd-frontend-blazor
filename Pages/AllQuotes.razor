@@ -1,0 +1,44 @@
+﻿@page "/allquotes"
+@inject HttpClient Http
+@using qotd_frontend_blazor
+@inject Microsoft.Extensions.Configuration.IConfiguration config;
+
+<PageTitle>All Quotes</PageTitle>
+
+<h1>All Quotes</h1>
+
+<button class="btn btn-primary" @onclick="GetQuotes">Get list of quotes</button>
+<p></p>
+
+<p>@if (isError) {
+     <div>@errorMessage</div>
+}
+</p>
+<ul>
+    @foreach (var quote in quotes)
+    {
+        <li>@quote.id: "@quote.quotation" - @quote.author</li>
+    }
+</ul>
+
+@code {
+    private List<Quote> quotes = new();
+    private bool isError = false;
+    private string errorMessage;
+
+    private async Task GetQuotes()
+    {
+        isError = false;
+        try {
+            string url = config.GetValue<string>("ApiURL");
+            quotes = await Http.GetFromJsonAsync<List<Quote>>(url + "/quotes");
+        }
+        catch (Exception e)
+        {
+            errorMessage = e.Message;
+            isError = true;
+        }
+    }
+
+
+}

@@ -1,0 +1,21 @@
+﻿@page "/notes"
+
+@inject Microsoft.Extensions.Configuration.IConfiguration config;
+
+
+<PageTitle>Notes</PageTitle>
+
+<h1>Notes</h1>
+
+The base URL for the backend service is set to: @apiURL
+
+<PageTitle>Configuration</PageTitle>
+
+@code{
+    private string apiURL;
+
+    protected override async Task OnInitializedAsync()
+    {
+        apiURL = config.GetValue<string>("ApiURL");
+    }
+}

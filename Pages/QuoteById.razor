@@ -1,0 +1,40 @@
+﻿@page "/quotebyid"
+@inject HttpClient Http
+@using qotd_frontend_blazor
+@inject Microsoft.Extensions.Configuration.IConfiguration config;
+
+
+<PageTitle>Get quote by ID</PageTitle>
+
+<h1>Get quote by ID</h1>
+
+
+<p>
+    <label>
+        Quote ID:
+        <input @bind="quoteID" />
+    </label>
+</p>
+<button class="btn btn-primary" @onclick="GetQuoteById">Get a quote</button>
+<p></p>
+
+    <p role="status">@currentQuote</p>
+
+@code {
+    private int? quoteID;
+    private string currentQuote = "Enter a number and click Get a quote";
+    private Quote? quote;
+
+    private async Task GetQuoteById()
+    {
+        try
+        {
+            string url = config.GetValue<string>("ApiURL");
+            quote = await Http.GetFromJsonAsync<Quote>(url + "/quotes/" + quoteID);
+            currentQuote = "Quote number " + quoteID + ": \"" + quote.quotation + "\"" + " - " + quote.author;
+        } catch (Exception e)
+        {
+            currentQuote = e.Message;
+        }
+    }
+}

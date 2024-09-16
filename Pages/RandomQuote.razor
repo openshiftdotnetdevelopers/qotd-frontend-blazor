@@ -1,0 +1,31 @@
+﻿@page "/randomquote"
+@inject HttpClient Http
+@inject Microsoft.Extensions.Configuration.IConfiguration config;
+
+
+@using qotd_frontend_blazor
+
+<PageTitle>Random Quote</PageTitle>
+
+<h1>Random Quote</h1>
+
+<button class="btn btn-primary" @onclick="GetQuote">Get a random quote</button>
+<p></p>
+<p role="status">@currentQuote</p>
+
+@code {
+    private string currentQuote = "Click the 'Get a random quote' button to retrieve a quote";
+
+    private Quote? quote;
+
+    private async Task GetQuote() {
+        try {
+            string url = config.GetValue<string>("ApiURL");
+
+            quote = await Http.GetFromJsonAsync<Quote>(url + "/quotes/random");
+            currentQuote = "\"" + quote.quotation + "\"" + " - " + quote.author;
+        } catch (Exception e) {
+            currentQuote = "An error occured while attempting to retrieve a quote from ";
+        }
+    }
+}
